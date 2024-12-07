@@ -1,4 +1,4 @@
-from sqlite3 import sqlite3, Connection, Cursor
+import sqlite3
 from typing import List
 
 class AliasClientManager:
@@ -7,8 +7,8 @@ class AliasClientManager:
         Initialize the AliasClientManager and set the path to the database.
         """
         self.dbpath = dbpath
-        self.con: Connection = None
-        self.cursor: Cursor = None
+        self.con: sqlite3.Connection = None
+        self.cursor: sqlite3.Cursor = None
     
     def open_db(self):
         """
