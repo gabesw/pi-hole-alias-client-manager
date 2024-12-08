@@ -68,16 +68,24 @@ class AliasClientManager:
 
         :param id: the alias ID
         :param name: the new alias name, or None to keep the current name
-        :param comment: the new comment, or None to keep the current comment
+        :param comment: the new comment, or None to keep the current comment, or "NULL" to remove the comment
         """
         if name is None and comment is None:
             return
-        update_name_string = f"name = '{name}'" if name is not None else ""
-        if name is not None and comment is not None:
-            update_name_string += ", "
-        update_comment_string = f"comment = '{comment}'" if comment is not None else ""
+        
+        updates = []
+        if name is not None:
+            updates.append(f"name = '{name}'")
+        if comment is not None:
+            updates.append(f"comment = '{comment}'")
+        elif comment == "NULL":
+            updates.append(f"comment = NULL")
+        elif comment == "/NULL":
+            updates.append(f"comment = 'NULL'")
 
-        self.cursor.execute(f"UPDATE aliasclient SET {update_name_string}, {update_comment_string} WHERE id = {id};")
+        set_args = ", ".join(updates)
+
+        self.cursor.execute(f"UPDATE aliasclient SET {set_args} WHERE id = {id};")
 
     def assign_device_to_alias(self, alias_id: int, macs: list[str], ips: list[str]):
         """
